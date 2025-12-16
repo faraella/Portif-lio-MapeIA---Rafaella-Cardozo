@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfólio MapeIA - Rafaella Cardozo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root {
+    --verde-escuro: #1f3d2b;
+    --verde-medio: #355f45;
+    --verde-claro: #4f7f5f;
+    --marrom: #7a5c3e;
+    --branco: #ffffff;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--verde-escuro);
+    color: var(--branco);
+    line-height: 1.6;
+}
+/* HERO */
+.hero {
+    height: 50vh;
+    background:
+        linear-gradient(rgba(31,61,43,0.75), rgba(31,61,43,0.75)),
+        url("https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1200") center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.hero h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+}
+.subtitle {
+    font-size: 1.3rem;
+    color: #e6e6e6;
+}
+/* NAV */
+nav {
+    background-color: #162a1f;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    list-style: none;
+}
+nav a {
+    color: var(--branco);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: var(--verde-medio);
+    transition: 0.3s;
+}
+nav a:hover {
+    background-color: var(--marrom);
+}
+/* CONTAINER */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 60px 20px;
+}
+/* SECTIONS */
+section {
+    margin-bottom: 60px;
+    padding: 40px;
+    background-color: var(--verde-medio);
+    border-radius: 20px;
+}
+section h2 {
+    margin-bottom: 20px;
+    border-bottom: 3px solid var(--marrom);
+    display: inline-block;
+}
+/* ABOUT */
+.about-content {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.about-image {
+    width: 260px;
+    height: 260px;
+    border-radius: 15px;
+    border: 4px solid var(--marrom);
+    overflow: hidden;
+}
+.about-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.about-extra {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--marrom);
+}
+.skills-list {
+    list-style: none;
+}
+.skills-list li {
+    background-color: var(--verde-claro);
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+/* MAPAS */
+.map-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    margin-top: 30px; /* Adicionado para espaçar dos alertas */
+    flex-wrap: wrap;
+}
+.filter-btn {
+    background-color: var(--verde-claro);
+    color: var(--branco);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.filter-btn.active,
+.filter-btn:hover {
+    background-color: var(--marrom);
+}
+.maps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+.map-card {
+    background-color: #2b4d3a;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+.map-container {
+    height: 300px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 2px solid var(--marrom);
+}
+.map-card h3 {
+    margin-bottom: 10px;
+    color: var(--branco);
+}
+.map-card p {
+    font-size: 0.9rem;
+    color: #e6e6e6;
+    margin-top: 10px;
+}
+.map-source {
+    font-size: 0.75rem;
+    color: #b0b0b0;
+    margin-top: 8px;
+    font-style: italic;
+    text-align: left;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+/* Novo estilo para a data da fonte */
+.map-source-date {
+    font-size: 0.7em; /* Um pouco menor que a fonte */
+    color: #909090; /* Um pouco mais claro */
+    margin-top: 4px;
+    text-align: left;
+    padding: 0 8px 8px 8px; /* Ajusta o padding para ficar alinhado com a fonte */
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 6px 6px; /* Apenas as bordas inferiores arredondadas */
+}
+.fullscreen-btn {
+    background-color: var(--marrom);
+    color: var(--branco);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+.fullscreen-btn:hover {
+    background-color: var(--verde-claro);
+}
+.map-legend {
+    background-color: rgba(31, 61, 43, 0.9);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    text-align: left;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+/* ALERTAS */
+.alerts-section {
+    margin: 25px 0;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border-left: 4px solid var(--marrom);
+}
+.alerts-section h3 {
+    margin-bottom: 15px;
+    color: var(--branco);
+    font-size: 1.1rem;
+}
+.alert-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer; /* Adicionado para indicar que é clicável */
+    transition: background-color 0.2s ease; /* Transição para hover */
+}
+.alert-item:hover { /* Estilo para hover */
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.alert-icon {
+    font-size: 1.5rem;
+}
+.alert-content {
+    flex: 1;
+}
+.alert-content strong {
+    display: block;
+    margin-bottom: 4px;
+}
+.alert-content span {
+    font-size: 0.85rem;
+    color: #e6e6e6;
+}
+.alert-high {
+    border-left: 4px solid #d32f2f; /* Vermelho */
+}
+.alert-medium {
+    border-left: 4px solid #ff9800; /* Laranja */
+}
+.alert-low {
+    border-left: 4px solid #4caf50; /* Verde */
+}
+/* CONTATO */
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.contact-btn {
+    background-color: var(--marrom);
+    color: var(--branco);
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.contact-btn:hover {
+    background-color: var(--verde-claro);
+}
+/* FOOTER */
+footer {
+    background-color: #162a1f;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+}
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    .maps-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+<div class="hero">
+    <h1>MAPEIA</h1>
+    <p class="subtitle">Cartografia • Sustentabilidade • IA</p>
+</div>
+<nav>
+<ul>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#mapas">Mapas</a></li>
+    <li><a href="#contato">Contato</a></li>
+</ul>
+</nav>
+<div class="container">
+<section id="sobre">
+<h2>Sobre Mim</h2>
+<div class="about-content">
+    <div class="about-text">
+        <p>
+            Olá, sou Rafaella Cardozo, estudante de Gestão Ambiental pela USP.
+            Sou apaixonada por geoprocessamento como ferramenta ESG para análises
+            territoriais, implementação de novas tecnologias e monitoramento de
+            mudanças climáticas.
+        </p>
+
+        <p>
+            Além do meu portfólio pessoal, gostaria de compartilhar minhas
+            competências e mapas que podem ser interessantes para análises
+            no contexto Amazônico!
+        </p>
+    </div>
+</div>
+
+<div class="about-extra">
+<h3>Competências</h3>
+<ul class="skills-list">
+    <li>QGIS & Cartografia</li>
+    <li>Geoprocessamento & Sensoriamento Remoto</li>
+    <li>ESG & Especialista em Inventário de Gases de Efeito Estufa</li>
+    <li>Visualização de Dados</li>
+    <li>Monitoramento Ambiental</li>
+</ul>
+</div>
+</section>
+<section id="mapas">
+<h2>Mapas Interativos Focados na Amazônia</h2>
+
+<!-- Nova seção de Alertas em Tempo Real -->
+<div class="alerts-section">
+    <h3>🚨 Alertas em Tempo Real</h3>
+    <div id="realtime-alerts-container">
+        <!-- Alertas serão carregados aqui via JavaScript -->
+        <p>Carregando alertas...</p>
+    </div>
+</div>
+<!-- Fim da nova seção de Alertas em Tempo Real -->
+
+<div class="map-filters">
+<button class="filter-btn active" data-filter="todos">Todos</button>
+<button class="filter-btn" data-filter="desmatamento">Desmatamento</button>
+<button class="filter-btn" data-filter="clima">Clima</button>
+<button class="filter-btn" data-filter="analise">Análise</button>
+</div>
+<div class="maps-grid">
+<!-- Mapa 1: Áreas de Desmatamento -->
+<div class="map-card" data-category="desmatamento">
+<h3>🌲 Áreas de Desmatamento</h3>
+<div id="map1" class="map-container"></div>
+<p>Monitoramento de áreas críticas de desmatamento na Amazônia Legal</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #d32f2f;"></div>
+        <span>Alta Pressão</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #ff9800;"></div>
+        <span>Média Pressão</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #2e7d32;"></div>
+        <span>Preservada</span>
+    </div>
+</div>
+<div class="map-source">Fonte: PRODES/INPE</div>
+<div class="map-source-date">Dados de referência: Outubro/2024</div>
+</div>
+<!-- Mapa 2: Precipitação -->
+<div class="map-card" data-category="clima">
+<h3>🌧️ Precipitação Atual</h3>
+<div id="map2" class="map-container"></div>
+<p>Níveis de precipitação e alertas de chuva em tempo real</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #1565c0;"></div>
+        <span>Alta (>200mm)</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #42a5f5;"></div>
+        <span>Moderada (100-200mm)</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #90caf9;"></div>
+        <span>Baixa (<100mm)</span>
+    </div>
+</div>
+<div class="map-source">Fonte: CPTEC/INPE</div>
+<div class="map-source-date">Dados de referência: Dezembro/2024</div>
+</div>
+<!-- Mapa 3: Temperatura -->
+<div class="map-card" data-category="clima">
+<h3>🌡️ Temperatura Regional</h3>
+<div id="map3" class="map-container"></div>
+<p>Variação de temperatura na região amazônica</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #d32f2f;"></div>
+        <span>Quente (>30°C)</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #ff9800;"></div>
+        <span>Moderado (25-30°C)</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #4caf50;"></div>
+        <span>Ameno (<25°C)</span>
+    </div>
+</div>
+<div class="map-source">Fonte: INMET</div>
+<div class="map-source-date">Dados de referência: Dezembro/2024</div>
+</div>
+<!-- Mapa 4: Análise Integrada -->
+<div class="map-card" data-category="analise">
+<h3>📊 Hotspots Críticos</h3>
+<div id="map4" class="map-container"></div>
+<p>Análise integrada: desmatamento, queimadas e áreas protegidas</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #7b1fa2;"></div>
+        <span>Terras Indígenas</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #c62828;"></div>
+        <span>Focos de Queimada</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #1b5e20;"></div>
+        <span>Unidades de Conservação</span>
+    </div>
+</div>
+<div class="map-source">Fonte: FUNAI, BDQueimadas/INPE, ICMBio</div>
+<div class="map-source-date">Dados de referência: Novembro/2024</div>
+</div>
+<!-- Mapa 5: Biodiversidade -->
+<div class="map-card" data-category="analise">
+<h3>🦜 Biodiversidade</h3>
+<div id="map5" class="map-container"></div>
+<p>Áreas de alta biodiversidade e corredores ecológicos</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #004d40;"></div>
+        <span>Alta Biodiversidade</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #00897b;"></div>
+        <span>Corredores Ecológicos</span>
+    </div>
+</div>
+<div class="map-source">Fonte: MMA, IUCN</div>
+<div class="map-source-date">Dados de referência: 2023</div>
+</div>
+<!-- Mapa 6: Hidrografia -->
+<div class="map-card" data-category="analise">
+<h3>💧 Bacias Hidrográficas</h3>
+<div id="map6" class="map-container"></div>
+<p>Principais rios e bacias da Amazônia</p>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #0277bd;"></div>
+        <span>Rios Principais</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color" style="background-color: #4fc3f7;"></div>
+        <span>Tributários</span>
+    </div>
+</div>
+<div class="map-source">Fonte: ANA, IBGE</div>
+<div class="map-source-date">Dados de referência: 2022</div>
+</div>
+</div>
+</section>
+<section id="contato">
+<h2>Contato</h2>
+<div class="contact-links">
+<a class="contact-btn" href="https://www.linkedin.com/in/rafaella-sant-anna-b00830237/" target="_blank">LinkedIn</a>
+<a class="contact-btn" href="mailto:rafaella.snc830@gmail.com">E-mail</a>
+</div>
+</section>
+</div>
+<footer>
+<p>© 2024 Rafaella Cardozo — MapeIA | Dados: OpenStreetMap, INPE, IBGE</p>
+</footer>
+<script>
+// Filtros
+const filterBtns = document.querySelectorAll('.filter-btn');
+const mapCards = document.querySelectorAll('.map-card');
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        mapCards.forEach(card => {
+            card.style.display =
+                filter === 'todos' || card.dataset.category === filter
+                ? 'block'
+                : 'none';
+        });
+    });
+});
+
+// Função para formatar o tempo de forma dinâmica (ex: "há 5 minutos")
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const seconds = Math.round((now - then) / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    if (seconds < 60) return "Agora";
+    if (minutes < 60) return `Há ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+    if (hours < 24) return `Há ${hours} hora${hours > 1 ? 's' : ''}`;
+    return `Há ${days} dia${days > 1 ? 's' : ''}`;
+}
+
+// Função para gerar alertas dinamicamente
+function generateRealtimeAlerts() {
+    const alertsContainer = document.getElementById('realtime-alerts-container');
+    alertsContainer.innerHTML = ''; // Limpa os alertas existentes
+
+    // Dados de alertas simulados. Adicione um timestamp para simular "quando" o alerta foi emitido.
+    // Para simular "tempo real", podemos gerar timestamps próximos ao "agora" ou variar um pouco.
+    const now = new Date().getTime(); // Tempo atual em milissegundos
+
+    const alertsData = [
+        {
+            type: 'high',
+            icon: '⛈️',
+            title: 'Chuva Forte no Pará',
+            description: 'Alerta de chuvas intensas e risco de alagamentos na região metropolitana de Belém e nordeste do Pará. Mantenha-se seguro!',
+            timestamp: now - Math.floor(Math.random() * 120000) // Entre 0 e 2 minutos atrás
+        },
+        {
+            type: 'medium',
+            icon: '🔥',
+            title: 'Foco de Queimada em Rondônia',
+            description: 'Novo foco de queimada detectado próximo a Porto Velho. Equipes de monitoramento em ação.',
+            timestamp: now - Math.floor(Math.random() * 300000) - 120000 // Entre 2 e 7 minutos atrás
+        },
+        {
+            type: 'high',
+            icon: '🌡️',
+            title: 'Onda de Calor Extrema no Amazonas',
+            description: 'Temperaturas acima de 38°C em Manaus e arredores. Hidrate-se e evite exposição ao sol.',
+            timestamp: now - Math.floor(Math.random() * 600000) - 420000 // Entre 7 e 17 minutos atrás
+        },
+        {
+            type: 'low',
+            icon: '💧',
+            title: 'Nível dos Rios Estável no Acre',
+            description: 'Monitoramento indica níveis normais dos rios na bacia do Acre. Sem risco imediato de cheias.',
+            timestamp: now - Math.floor(Math.random() * 1200000) - 1020000 // Entre 17 e 37 minutos atrás
+        },
+        {
+            type: 'medium',
+            icon: '🌳',
+            title: 'Desmatamento Recente em Mato Grosso',
+            description: 'Área de desmatamento de 5 hectares identificada na divisa com o Pará. Investigação em curso.',
+            timestamp: now - Math.floor(Math.random() * 2400000) - 2220000 // Entre 37 e 77 minutos atrás
+        }
+    ];
+
+    // Embaralha os alertas para parecerem mais "aleatórios" a cada atualização
+    alertsData.sort(() => Math.random() - 0.5);
+
+    alertsData.forEach(alert => {
+        const alertItem = document.createElement('div');
+        alertItem.classList.add('alert-item', `alert-${alert.type}`);
+        alertItem.innerHTML = `
+            <span class="alert-icon">${alert.icon}</span>
+            <div class="alert-content">
+                <strong>${alert.title}</strong>
+                <span>${alert.description} (${formatTimeAgo(alert.timestamp)})</span>
+            </div>
+        `;
+        // Torna o alerta clicável
+        alertItem.addEventListener('click', () => {
+            console.log(`Detalhes do Alerta:`);
+            console.log(`Título: ${alert.title}`);
+            console.log(`Descrição: ${alert.description}`);
+            console.log(`Tipo: ${alert.type}`);
+            console.log(`Emitido: ${new Date(alert.timestamp).toLocaleString('pt-BR')}`);
+            alert(`Alerta: ${alert.title}\n\n${alert.description}\n\nEmitido: ${formatTimeAgo(alert.timestamp)}`);
+        });
+        alertsContainer.appendChild(alertItem);
+    });
+}
+
+// Chama a função para gerar os alertas quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    generateRealtimeAlerts();
+    // Atualiza os alertas a cada 15 segundos para simular "tempo real"
+    setInterval(generateRealtimeAlerts, 15000); // 15000 ms = 15 segundos
+});
+
+
+// Centro da Amazônia
+const amazonCenter = [-3.4653, -62.2159];
+// Mapa 1: Áreas de Desmatamento
+const map1 = L.map('map1').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map1);
+// Áreas críticas de desmatamento
+const deforestationAreas = [
+    { coords: [-8.7619, -63.9004], name: 'Porto Velho', risk: 'alta', color: '#d32f2f' },
+    { coords: [-3.1190, -60.0217], name: 'Manaus', risk: 'média', color: '#ff9800' },
+    { coords: [-9.9746, -67.8243], name: 'Rio Branco', risk: 'alta', color: '#d32f2f' },
+    { coords: [-5.5330, -56.0137], name: 'Itaituba', risk: 'alta', color: '#d32f2f' },
+    { coords: [-2.5297, -54.7087], name: 'Santarém', risk: 'média', color: '#ff9800' }
+];
+deforestationAreas.forEach(area => {
+    L.circle(area.coords, {
+        color: area.color,
+        fillColor: area.color,
+        fillOpacity: 0.4,
+        radius: 80000
+    }).addTo(map1).bindPopup(`<b>${area.name}</b><br>Risco: ${area.risk}`);
+});
+// Mapa 2: Precipitação
+const map2 = L.map('map2').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map2);
+// Zonas de precipitação
+const rainZones = [
+    { coords: [-0.7693, -59.9547], name: 'Alto Rio Negro', level: 'Alta', color: '#1565c0' },
+    { coords: [-3.1190, -60.0217], name: 'Manaus', level: 'Moderada', color: '#42a5f5' },
+    { coords: [-8.7619, -63.9004], name: 'Rondônia', level: 'Baixa', color: '#90caf9' },
+    { coords: [-1.4558, -48.4902], name: 'Belém', level: 'Alta', color: '#1565c0' }
+];
+rainZones.forEach(zone => {
+    L.circle(zone.coords, {
+        color: zone.color,
+        fillColor: zone.color,
+        fillOpacity: 0.5,
+        radius: 100000
+    }).addTo(map2).bindPopup(`<b>${zone.name}</b><br>Precipitação: ${zone.level}`);
+});
+// Mapa 3: Temperatura
+const map3 = L.map('map3').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map3);
+// Zonas de temperatura
+const tempZones = [
+    { coords: [-3.1190, -60.0217], name: 'Manaus', temp: '32°C', color: '#d32f2f' },
+    { coords: [-9.9746, -67.8243], name: 'Rio Branco', temp: '31°C', color: '#d32f2f' },
+    { coords: [-2.5297, -54.7087], name: 'Santarém', temp: '28°C', color: '#ff9800' },
+    { coords: [-0.7693, -59.9547], name: 'São Gabriel', temp: '26°C', color: '#ff9800' }
+];
+tempZones.forEach(zone => {
+    L.circle(zone.coords, {
+        color: zone.color,
+        fillColor: zone.color,
+        fillOpacity: 0.4,
+        radius: 90000
+    }).addTo(map3).bindPopup(`<b>${zone.name}</b><br>Temperatura: ${zone.temp}`);
+});
+// Mapa 4: Hotspots Críticos
+const map4 = L.map('map4').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map4);
+// Terras Indígenas
+const indigenousLands = [
+    { coords: [-0.4259, -62.6025], name: 'TI Yanomami', color: '#7b1fa2' },
+    { coords: [-7.6204, -59.6634], name: 'TI Uru-Eu-Wau-Wau', color: '#7b1fa2' }
+];
+indigenousLands.forEach(land => {
+    L.circle(land.coords, {
+        color: land.color,
+        fillColor: land.color,
+        fillOpacity: 0.3,
+        radius: 120000
+    }).addTo(map4).bindPopup(`<b>${land.name}</b><br>Terra Indígena Protegida`);
+});
+// Focos de queimada
+const fireSpots = [
+    { coords: [-8.7619, -63.9004], name: 'Foco Porto Velho' },
+    { coords: [-5.5330, -56.0137], name: 'Foco Itaituba' }
+];
+fireSpots.forEach(spot => {
+    L.marker(spot.coords, {
+        icon: L.divIcon({
+            className: 'fire-marker',
+            html: '🔥',
+            iconSize: [30, 30]
+        })
+    }).addTo(map4).bindPopup(`<b>${spot.name}</b><br>Alerta de Queimada`);
+});
+// Mapa 5: Biodiversidade
+const map5 = L.map('map5').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map5);
+const biodiversityAreas = [
+    { coords: [-2.1540, -59.9853], name: 'Parque Nacional do Jaú', color: '#004d40' },
+    { coords: [-0.6319, -66.7761], name: 'Pico da Neblina', color: '#004d40' },
+    { coords: [-3.2863, -52.2364], name: 'Corredor Central', color: '#00897b' }
+];
+biodiversityAreas.forEach(area => {
+    L.circle(area.coords, {
+        color: area.color,
+        fillColor: area.color,
+        fillOpacity: 0.4,
+        radius: 100000
+    }).addTo(map5).bindPopup(`<b>${area.name}</b><br>Hotspot de Biodiversidade`);
+});
+// Mapa 6: Hidrografia
+const map6 = L.map('map6').setView(amazonCenter, 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map6);
+// Rios principais
+const rivers = [
+    { 
+        name: 'Rio Amazonas',
+        coords: [
+            [-3.1190, -60.0217],
+            [-2.1540, -55.4765],
+            [-1.4558, -48.4902]
+        ]
+    },
+    {
+        name: 'Rio Negro',
+        coords: [
+            [-3.1190, -60.0217],
+            [-0.7693, -62.9547]
+        ]
+    },
+    {
+        name: 'Rio Madeira',
+        coords: [
+            [-3.3925, -58.8606],
+            [-8.7619, -63.9004]
+        ]
+    }
+];
+rivers.forEach(river => {
+    L.polyline(river.coords, {
+        color: '#0277bd',
+        weight: 4,
+        opacity: 0.7
+    }).addTo(map6).bindPopup(`<b>${river.name}</b>`);
+});
+</script>
+</body>
+</html>
